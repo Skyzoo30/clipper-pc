@@ -1,0 +1,31 @@
+name: Build Windows exe
+
+# Build otomatis setiap push ke main + bisa dipicu manual.
+# Hasil: release "build-N" berisi ClipperPC-windows.zip (folder dist/ClipperPC
+# yang sudah di-zip; jalankan ClipperPC.exe di dalamnya). Model Whisper
+# TIDAK dibungkus: di-download sekali saat render pertama di PC pengguna.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        run: pip install -r requirements.txt pyinstaller
+      - name: Build exe
+        run: pyinstaller clipper_gui.spec
+      - name: Zip build
+        run: Compress-Archive -Path dist/ClipperPC -DestinationPath ClipperPC-windows.zip
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: ClipperPC build ${{ github.run_number }}
+          files: ClipperPC-windows.zip
