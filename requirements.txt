@@ -1,0 +1,8 @@
+# Tested combination — do not upgrade av blindly.
+# av 19.x removes the metadata_errors API faster-whisper uses;
+# very old av does not have it yet. av 13.1.0 is the sweet spot.
+faster-whisper==1.2.1
+av==13.1.0
+# Static ffmpeg binary, dipakai clipper.ffmpeg_exe() saat ffmpeg tidak ada
+# di PATH — wajib untuk .exe, karena PC pengguna belum tentu install ffmpeg.
+imageio-ffmpeg
